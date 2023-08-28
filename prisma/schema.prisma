@@ -32,7 +32,7 @@ model JournalEntry{
   content String @db.Text
   analysis Analysis?  //one to one
 
-  @@index([userId])
+  @@unique([userId,id]) //compound index query with userid_id
 }
 
 
