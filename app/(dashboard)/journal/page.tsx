@@ -15,7 +15,12 @@ const getEntries = async () => {
       createdAt: "desc",
     },
   })
-  await analyze("makanan atau minuman untuk obat alami asam urat yang baik")
+  await analyze(`i'm going to give you a journal entry, i want you to analyz it for a few things, i need the mood, a summary, what the subject is, and a color representing the mood, you need to respond back with formatted JSON like so:{"mood":"","subject":"", "color":"", negative:""}.
+  
+  entry:
+  Today was a really great day, i finally win a badminton game after 2 weeks of lose streak.
+  
+  `)
   return entries
 }
 
