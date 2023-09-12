@@ -30,6 +30,7 @@ model JournalEntry{
   userId String
   user User @relation(fields: [userId], references: [id]) //one to many
   content String @db.Text
+  
   analysis Analysis?  //one to one
 
   @@unique([userId,id]) //compound index query with userid_id
@@ -43,12 +44,13 @@ model Analysis{
   updatedAt DateTime @updatedAt
 
   entryId String
-  entry JournalEntry @relation(fields: [entryId], references: [id])
+  entry JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
 
   mood String
   summary String @db.Text
   color String
   negative Boolean
+  subject String
 
   @@unique([entryId])
 }

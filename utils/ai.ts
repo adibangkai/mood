@@ -19,15 +19,12 @@ const parser = StructuredOutputParser.fromZodSchema(
       .describe(
         "a hexidecimal color code that represents the mood of the entry. Example #0101fe for blue representing happiness."
       ),
-    sentimentScore: z
-      .number()
-      .describe(
-        "sentiment of the text and rated on a scale from -10 to 10, where -10 is extremely negative, 0 is neutral, and 10 is extremely positive."
-      ),
+
+    subject: z.string().describe("the subject of journal entry."),
   })
 )
 
-const getPrompt = (content) => {
+const getPrompt = async (content) => {
   const format_instructions = parser.getFormatInstructions()
 
   const prompt = new PromptTemplate({
@@ -36,10 +33,22 @@ const getPrompt = (content) => {
     inputVariables: ["entry"],
     partialVariables: { format_instructions },
   })
+
+  const input = await prompt.format({
+    entry: content,
+  })
+
+  return input
 }
 
-export const analyze = async (prompt) => {
+export const analyze = async (content) => {
+  const input = await getPrompt(content)
   const model = new OpenAI({ temperature: 0, modelName: "gpt-3.5-turbo" })
-  const res = await model.call(prompt)
-  console.log(res)
+  const res = await model.call(input)
+
+  try {
+    return parser.parse(res)
+  } catch (err) {
+    console.log(err)
+  }
 }
