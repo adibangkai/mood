@@ -1,3 +1,4 @@
+import HistoryChart from "@/components/HistoryChart"
 import { getUserByClerkId } from "@/utils/auth"
 import { prisma } from "@/utils/db"
 
@@ -7,19 +8,26 @@ const getData = async () => {
     where: {
       userId: user.id,
     },
-    select: {
-      sentimentScore: true,
+    orderBy: {
+      createdAt: "asc",
     },
   })
   const sum = analysis.reduce((acc, curr) => {
     return acc + curr.sentimentScore
   }, 0)
-  const average = sum / analysis.length
+  const average = Math.round(sum / analysis.length)
   return { analysis, average }
 }
 const History = async () => {
   const { analysis, average } = await getData()
-  return <div>history: {average}</div>
+  return (
+    <div className="h-full w-full">
+      <div>average sentiment: {average}</div>
+      <div className="h-full w-full">
+        <HistoryChart data={analysis} />
+      </div>
+    </div>
+  )
 }
 
 export default History
